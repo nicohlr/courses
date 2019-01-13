@@ -97,3 +97,26 @@ classifier.add(Dense(units=1, kernel_initializer='uniform', activation='sigmoid'
 # Compilling the ANN
 classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
+# Model tuning
+
+def build_ann(optimizer):
+    classifier = Sequential()
+    classifier.add(Dense(units=6, kernel_initializer='uniform', activation='relu', input_shape = (11,)))
+    classifier.add(Dropout(p=0.1)) 
+    classifier.add(Dense(units=6, kernel_initializer='uniform', activation='relu'))
+    classifier.add(Dropout(p=0.1)) 
+    classifier.add(Dense(units=1, kernel_initializer='uniform', activation='sigmoid'))
+    classifier.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=['accuracy'])
+    return classifier
+
+classifier = KerasClassifier(build_fn=build_ann, verbose=1)
+parameters = {
+    'batch_size' : [25, 38],
+    'epochs' : [100, 510],
+    'optimizer' : ['adam', 'rmsprop']
+}
+grid_search = GridSearchCV(estimator=classifier, param_grid=parameters, scoring='accuracy', cv=5)
+grid_search.fit(X_train, y_train)
+best_params = grid_search.best_params_
+best_accuracy = grid_search.best_score_
+print('Best accuracy:', best_accuracy, '\nBest parameters:', best_params)

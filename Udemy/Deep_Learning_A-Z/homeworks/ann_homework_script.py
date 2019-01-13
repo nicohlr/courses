@@ -17,6 +17,8 @@ from keras.layers import Dense
 import warnings
 warnings.filterwarnings('ignore')
 
+# Data preprocessing
+
 path_train = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))), 'ressources/Artificial_Neural_Networks/Churn_Modelling.csv')
 dataset = pd.read_csv(path_train)
 print(dataset.head())
@@ -32,6 +34,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
+
+# Building our ANN
 
 # Initializing our ANN
 classifier = Sequential()
@@ -60,6 +64,8 @@ fig.xaxis.set_ticklabels(['Stay', 'Leave'])
 fig.yaxis.set_ticklabels(['Stay', 'Leave']);
 plt.show()
 
+# K-fold cross validation
+
 def build_ann():
     classifier = Sequential()
     classifier.add(Dense(units=6, kernel_initializer='uniform', activation='relu', input_shape = (11,)))
@@ -75,3 +81,19 @@ print(accuracies)
 mean = accuracies.mean()
 variance = accuracies.std()
 print('Mean accuracy:', mean, '\nVariance:', variance)
+
+# Dropout Regularization
+
+# Initializing our ANN
+classifier = Sequential()
+# Adding the input layer and the first hidden layer of our ANN with dropout
+classifier.add(Dense(units=6, kernel_initializer='uniform', activation='relu', input_shape = (11,)))
+classifier.add(Dropout(p=0.1)) 
+# Adding the second hidden layer with dropout
+classifier.add(Dense(units=6, kernel_initializer='uniform', activation='relu'))
+classifier.add(Dropout(p=0.1))
+# Adding the output layer
+classifier.add(Dense(units=1, kernel_initializer='uniform', activation='sigmoid'))
+# Compilling the ANN
+classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+

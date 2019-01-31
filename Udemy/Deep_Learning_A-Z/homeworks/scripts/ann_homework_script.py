@@ -18,7 +18,8 @@ from keras.wrappers.scikit_learn import KerasClassifier
 import warnings
 warnings.filterwarnings('ignore')
 
-# Data pre-processing
+############################## Data preprocessing ##############################
+
 path_train = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('__file__')))), 'ressources/Artificial_Neural_Networks/Churn_Modelling.csv')
 dataset = pd.read_csv(path_train)
 print(dataset.head())
@@ -44,7 +45,7 @@ sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
-# Building our ANN
+############################## Building Ann ##############################
 
 # Initializing our ANN
 classifier = Sequential()
@@ -74,7 +75,6 @@ fig.yaxis.set_ticklabels(['Stay', 'Leave'])
 plt.show()
 
 # K-fold cross validation
-
 
 def build_ann():
     classifier = Sequential()

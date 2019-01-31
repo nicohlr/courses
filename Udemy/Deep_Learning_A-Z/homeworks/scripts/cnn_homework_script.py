@@ -38,9 +38,9 @@ classifier.add(Dense(units=1, activation='sigmoid'))
 
 classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-path_train = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))), 
+path_train = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('__file__')))), 
                           'ressources/Convolutional_Neural_Networks/dataset/training_set')
-path_test = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))), 
+path_test = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('__file__')))), 
                           'ressources/Convolutional_Neural_Networks/dataset/test_set')
 
 # code for image augmentation found here : https://keras.io/preprocessing/image/

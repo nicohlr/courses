@@ -19,8 +19,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Data pre-processing
-current_path = os.path.dirname(os.path.dirname(os.path.abspath('__file__')))
-path_train = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))), 'ressources/Artificial_Neural_Networks/Churn_Modelling.csv')
+path_train = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath('__file__')))), 'ressources/Artificial_Neural_Networks/Churn_Modelling.csv')
 dataset = pd.read_csv(path_train)
 print(dataset.head())
 print(dataset.info())

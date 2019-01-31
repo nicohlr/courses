@@ -18,6 +18,8 @@ from keras.preprocessing.image import ImageDataGenerator
 import warnings
 warnings.filterwarnings('ignore')
 
+############################## Building CNN ##############################
+
 # Initializing our CNN
 classifier = Sequential()
 
@@ -85,3 +87,24 @@ deeper_classifier.fit_generator(training_set,
                          epochs=25, 
                          validation_data=test_set, 
                          validation_steps=2000) # number of images in training_set
+
+
+############################## Make Predictions ##############################
+
+path_prediction = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath('__file__'))), 
+                          'ressources/Convolutional_Neural_Networks/dataset/single_prediction/')
+
+image_1 = image.load_img(path_prediction+'cat_or_dog_1.jpg', target_size=(64, 64))
+image_1 = image.img_to_array(image_1)
+image_1 = np.expand_dims(image_1, axis=0)
+
+image_2 = image.load_img(path_prediction+'cat_or_dog_2.jpg', target_size=(64, 64))
+image_2 = image.img_to_array(image_2)
+image_2 = np.expand_dims(image_2, axis=0)
+
+prediction = deeper_classifier.predict(image_1)
+if prediction[0][0] == training_set.class_indices['dogs']:
+    prediction='dog'
+else:
+    prediction='cat'
+print(prediction)

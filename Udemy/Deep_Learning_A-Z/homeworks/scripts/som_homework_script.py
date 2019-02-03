@@ -63,3 +63,32 @@ frauds = mapping[2, 4] # get customers in white winning node of SOM above
 frauds = sc.inverse_transform(frauds)
 frauds = pd.DataFrame(frauds, columns=dataset.columns.tolist()[:-1])
 frauds.head()
+
+############################## Mega case study ##############################
+
+df = dataset.copy()
+df['Fraud'] = d.apply(lambda row: 1 if row.CustomerID in frauds['CustomerID'].astype(int).tolist() else 0, axis=1)
+
+X2 = df.iloc[:, 1:16].values
+y2 = df.iloc[:, 16].values
+
+# Feature Scaling
+sc = StandardScaler()
+X2 = sc.fit_transform(X2)
+
+classifier = Sequential()
+classifier.add(Dense(units=8, kernel_initializer='uniform', activation='relu', input_shape = (15,)))
+classifier.add(Dropout(p=0.1)) 
+classifier.add(Dense(units=8, kernel_initializer='uniform', activation='relu'))
+classifier.add(Dropout(p=0.1))
+classifier.add(Dense(units=1, kernel_initializer='uniform', activation='sigmoid'))
+classifier.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+classifier.fit(X2, y2, batch_size=10, epochs=100)
+
+fraud_probability = classifier.predict(X2)
+df['Fraud_proba'] = fraud_probability
+
+df = df[['CustomerID', 'Fraud_proba']]
+result = df.sort_values('Fraud_proba', axis=0, ascending= False)
+result.head(50)

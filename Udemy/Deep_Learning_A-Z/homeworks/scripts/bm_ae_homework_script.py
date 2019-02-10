@@ -158,3 +158,76 @@ for id_user in range(nb_users):
         test_loss += torch.mean(torch.abs(vt[vt>=0] - v[vt>=0]))
         counter += 1.
 print('test loss: '+str(test_loss/counter))
+
+############################## Building ratings output SAE ##############################
+
+
+class SAE(nn.Module): # inheritance from Module class of nn module of pytorch
+    
+    """
+    Building a Stacked Auto Encoder
+    """
+    
+    def __init__(self, ):
+        
+        super(SAE, self).__init__()
+        self.full_connection_1 = nn.Linear(nb_movies, 20) # 20 is the number of neurons in hidden layer (number of detected features)
+        self.full_connection_2 = nn.Linear(20, 10) # we encode the first hidden layer (decrease number of nodes)
+        self.full_connection_3 = nn.Linear(10, 20) # we decode the second hidden layer (increase number of nodes)
+        self.full_connection_4 = nn.Linear(20, nb_movies) # ouput layer (with same number of nodes than in input layer)
+        self.activation = nn.Sigmoid() # sigmoid activation function
+        
+    def forward(self, x):
+        """
+        Args:
+        x : input vector
+        """
+        
+        x = self.activation(self.full_connection_1(x)) # pass input to fisrt hidden layer
+        x = self.activation(self.full_connection_2(x)) # pass input to second hidden layer
+        x = self.activation(self.full_connection_3(x)) # pass input to third hidden layer
+        x = self.full_connection_4(x) # we do not apply activation function of output layer
+        
+        return x
+    
+sae = SAE()
+criterion = nn.MSELoss()
+optimizer = optim.RMSprop(sae.parameters(), lr = 0.01, weight_decay = 0.5)
+
+
+# Training the SAE
+nb_epoch = 200
+for epoch in range(1, nb_epoch + 1):
+    train_loss = 0
+    counter = 0. # float to avoid warning
+    for id_user in range(nb_users):
+        input = Variable(training_set[id_user]).unsqueeze(0) # add additinnal dimension corresponding to the batch (0 is index of new dimension)
+        target = input.clone() # target is the same as input vector for Auto Encoder 
+        if torch.sum(target.data > 0) > 0: # optimize code for bigger datasets (goes in loof only if at least one user rated one movie)
+            output = sae(input) # use Auto Encoder
+            target.require_grad = False # compute gradient only with respect to the input and not with respect to the target
+            output[target == 0] = 0 # save up some memory for bigger datasets
+            loss = criterion(output, target) # calculate loss between output and target
+            mean_corrector = nb_movies/float(torch.sum(target.data > 0) + 1e-10) # number of movies over number of movies that habe positive rating (+1e10 to avoid zero division without adding bias)
+            loss.backward() # indicate if needs to increase or decrease the weights using backward function
+            train_loss += np.sqrt(loss.item()*mean_corrector) # update loss value
+            counter += 1.
+            optimizer.step() # apply the optimizer to change the weights (amount of change in the weights)
+    print('epoch: ' + str(epoch) + ' loss: ' +  str(train_loss/counter))
+    
+    
+# Testing the SAE
+test_loss = 0
+counter = 0.
+for id_user in range(nb_users):
+    input = Variable(training_set[id_user]).unsqueeze(0) # we use training ratings to predict ratings for test set
+    target = Variable(test_set[id_user]).unsqueeze(0) # what we want to predict
+    if torch.sum(target.data > 0) > 0:
+        output = sae(input)
+        target.require_grad = False
+        output[target == 0] = 0
+        loss = criterion(output, target)
+        mean_corrector = nb_movies/float(torch.sum(target.data > 0) + 1e-10)
+        test_loss += np.sqrt(loss.item()*mean_corrector)
+        counter += 1.
+print('test loss: ' + str(test_loss/counter))

@@ -13,10 +13,19 @@ J = 0;
 % Instructions: Compute the cost of a particular choice of theta
 %               You should set J to the cost.
 
+[m,n] = size(X);
+theta_transposed = theta.';
+h_theta = zeros(0, 0);
 
+for num_rows = 1:m
+    line = theta_transposed*(X(num_rows,:).');
+    h_theta = [h_theta; line];
+end;
 
+disp(h_theta)
+
+J = 1/2*m;
 
 
 % =========================================================================
-
 end

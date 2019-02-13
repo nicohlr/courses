@@ -15,16 +15,17 @@ J = 0;
 
 [m,n] = size(X);
 theta_transposed = theta.';
-h_theta = zeros(0, 0);
+sum = 0;
+
+disp(theta_transposed)
+disp(X(1,:).')
 
 for num_rows = 1:m
-    line = theta_transposed*(X(num_rows,:).');
-    h_theta = [h_theta; line];
+    h = theta_transposed*(X(num_rows,:).');
+    sum = sum + (h-y(num_rows,:))^2
 end;
 
-disp(h_theta)
-
-J = 1/2*m;
+J = (1/(2*m))*sum;
 
 
 % =========================================================================

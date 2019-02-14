@@ -13,20 +13,9 @@ J = 0;
 % Instructions: Compute the cost of a particular choice of theta
 %               You should set J to the cost.
 
-[m,n] = size(X);
-theta_transposed = theta.';
-sum = 0;
-
-disp(theta_transposed)
-disp(X(1,:).')
-
-for num_rows = 1:m
-    h = theta_transposed*(X(num_rows,:).');
-    sum = sum + (h-y(num_rows,:))^2
-end;
-
-J = (1/(2*m))*sum;
-
+h_x = theta'*X';
+suared_diffs = (h_x' - y).^2;
+J = (1/(2*m))*sum(suared_diffs);
 
 % =========================================================================
 end

@@ -17,15 +17,17 @@ for iter = 1:num_iters
     %       of the cost function (computeCostMulti) and gradient here.
     %
 
-
-
-
-
-
-
-
-
-
+    n = length(theta); % number of variables
+    temp = zeros(1, n);
+    h_x = theta'*X';
+    
+    for j = 1:n % iterates over variables
+        derivative = sum((h_x' - y).*X(:,j));
+        theta_j = theta.'(1, j) - (alpha/m)*derivative; % compute new theta using gradient descent
+        temp(1, j) = theta_j; % store new values of theta in temporary array
+    end
+    
+    theta = temp.'; % update all theta simultaneously
 
     % ============================================================
 
@@ -33,5 +35,4 @@ for iter = 1:num_iters
     J_history(iter) = computeCostMulti(X, y, theta);
 
 end
-
 end
